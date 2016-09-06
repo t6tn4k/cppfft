@@ -228,7 +228,7 @@ public:
 
         return is_inverse
             ? std::transform(buffer.begin(), buffer.end(), result,
-                [&](auto v) { return v / element_type(sequence_size); })
+                [&](auto const& v) { return v / element_type(sequence_size); })
             : std::move(buffer.begin(), buffer.end(), result);
     }
 
