@@ -31,7 +31,7 @@ constexpr auto next_positional(InputIterator1 first, InputIterator2 last, Forwar
 template <typename InputIterator, typename Size, typename ForwardIterator>
 inline constexpr auto next_positional_n(InputIterator first, Size size, ForwardIterator result)
 {
-    return next_positional(first, first + size, result);
+    return cppfft::detail::next_positional(first, first + size, result);
 }
 
 template <typename DifferenceType, typename RandomAccessIterator1, typename RandomAccessIterator2>
@@ -59,8 +59,9 @@ auto replace(
 
     auto positions = std::vector<difference_type>(radices.size() - 1u, difference_type{0});
 
-    for (auto i = difference_type{0}; i < stride;
-        ++i, next_positional_n(radices.cbegin(), positions.size(), positions.begin()))
+    for (auto i = difference_type{0}; i < stride; void(++i),
+        cppfft::detail::next_positional_n(
+            radices.cbegin(), positions.size(), positions.begin()))
     {
         auto const index = length * std::inner_product(
             positions.cbegin(), positions.cend(), coefficient.cbegin(), difference_type{0});
@@ -103,8 +104,9 @@ auto replace(
     for (auto i = difference_type{0}; i < length; ++i)
     {
         for (auto j = difference_type{0}; j < stride;
-            ++j, void(++first),
-            next_positional_n(radices.cbegin(), positions.size(), positions.begin()))
+            void(++j), void(++first),
+            cppfft::detail::next_positional_n(
+                radices.cbegin(), positions.size(), positions.begin()))
         {
             auto const index = length * std::inner_product(
                 positions.cbegin(), positions.cend(), coefficient.cbegin(), difference_type{0});
