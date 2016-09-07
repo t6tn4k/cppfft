@@ -201,28 +201,16 @@ public:
 
         cppfft::detail::replace(radices, first, sequence_size, buffer.begin());
 
-        auto remainders = std::vector<difference_type>(radices.size());
-        auto strides = std::vector<difference_type>(radices.size());
+        auto stride = sequence_size;
 
-        remainders.front() = sequence_size / radices.front();
-        strides.front() = difference_type{1};
-
-        for (auto i = std::size_t{0u}; i + 1 < radices.size(); ++i)
+        for (auto radix = radices.rbegin(); radix != radices.rend(); ++radix)
         {
-            remainders.at(i + 1u) = remainders.at(i) / radices.at(i + 1u);
-            strides.at(i + 1u) = strides.at(i) * radices.at(i);
-        }
+            auto remainder = sequence_size / stride;
+            stride /= *radix;
 
-        for (auto i = std::size_t{0u}; i < radices.size(); ++i)
-        {
-            auto const index = radices.size() - i - 1u;
-            auto const& stride = strides.at(index);
-            auto const& radix = radices.at(index);
-            auto const& remainder = remainders.at(index);
-
-            for (auto iter = buffer.begin(); iter != buffer.end(); iter += radix * remainder)
+            for (auto iter = buffer.begin(); iter != buffer.end(); iter += *radix * remainder)
             {
-                butterfly(radix, is_inverse, remainder, stride, iter);
+                butterfly(*radix, is_inverse, remainder, stride, iter);
             }
         }
 
