@@ -90,7 +90,7 @@ auto replace(
     auto const length = radices.back();
     auto const stride = size / length;
 
-    std::vector<difference_type> coefficient(radices.size() - 1u);
+    auto coefficient = std::vector<difference_type>(radices.size() - 1u);
     coefficient.back() = difference_type{1};
 
     for (auto i = std::size_t{1}; i < coefficient.size(); ++i)
@@ -205,7 +205,7 @@ public:
 
         for (auto radix = radices.rbegin(); radix != radices.rend(); ++radix)
         {
-            auto remainder = sequence_size / stride;
+            auto const remainder = sequence_size / stride;
             stride /= *radix;
 
             for (auto iter = buffer.begin(); iter != buffer.end(); iter += *radix * remainder)
